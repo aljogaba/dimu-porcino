@@ -1,0 +1,403 @@
+/* =====================================================
+   TOOL SHELL · Header/Footer común v2
+   Laboratorio de Sistemas Porcícolas
+   Cargar antes del CSS específico de cada herramienta.
+   ===================================================== */
+
+:root {
+  --shell-brand: var(--brand, var(--accent, #0f3d36));
+  --shell-brand-mid: #174d43;
+  --shell-brand-dark: #0d2e29;
+  --shell-brand-soft: var(--brand-soft, var(--accent-soft, #dcece6));
+  --shell-text: #ffffff;
+  --shell-text-soft: #dcece6;
+  --shell-text-muted: #b8d7cb;
+  --shell-line: rgba(255,255,255,0.14);
+  --shell-radius: var(--radius, 18px);
+  --shell-shadow: 0 14px 32px rgba(8, 31, 27, 0.22);
+  --shell-container: 1440px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+.container {
+  width: min(var(--shell-container), calc(100% - clamp(34px, 6vw, 104px)));
+  margin-inline: auto;
+}
+
+/* ===== Header común ===== */
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  color: var(--shell-text);
+  background:
+    radial-gradient(circle at 10% 0%, rgba(255,255,255,0.11), transparent 30%),
+    linear-gradient(135deg, var(--shell-brand), var(--shell-brand-mid) 52%, var(--shell-brand-dark));
+  border-bottom: 1px solid var(--shell-line);
+  box-shadow: var(--shell-shadow);
+  backdrop-filter: blur(12px);
+  padding: 14px 0 13px;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 16px;
+  line-height: 1.4;
+  transition:
+    padding 190ms ease,
+    box-shadow 190ms ease,
+    background 190ms ease,
+    border-color 190ms ease;
+}
+
+.header-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: clamp(16px, 2.2vw, 28px);
+  align-items: center;
+}
+
+.site-header .brand-block {
+  min-width: 0;
+}
+
+.eyebrow {
+  margin: 0 0 6px;
+  color: #7a9b8f;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 12px;
+  font-weight: 850;
+}
+
+.site-header .eyebrow {
+  color: var(--shell-text-muted);
+  transition: font-size 190ms ease, margin 190ms ease, opacity 190ms ease;
+}
+
+.site-header .brand-block h1 {
+  margin: 0 0 4px;
+  color: var(--shell-text);
+  font-size: clamp(32px, 3.7vw, 52px);
+  line-height: 0.95;
+  letter-spacing: -0.06em;
+  text-wrap: balance;
+  transition:
+    font-size 190ms ease,
+    letter-spacing 190ms ease,
+    line-height 190ms ease,
+    margin 190ms ease;
+}
+
+.site-header .subtitle {
+  margin: 0;
+  color: var(--shell-text-soft);
+  font-size: 15.5px;
+  line-height: 1.25;
+  transition:
+    font-size 190ms ease,
+    opacity 190ms ease,
+    transform 190ms ease;
+}
+
+.site-header .author-line {
+  margin: 6px 0 0;
+  color: var(--shell-text-soft);
+  font-size: 13.75px;
+  font-weight: 650;
+  line-height: 1.25;
+  transition:
+    font-size 190ms ease,
+    margin 190ms ease,
+    opacity 190ms ease,
+    transform 190ms ease;
+}
+
+.site-header .author-line a,
+.site-footer a {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(255,255,255,0.45);
+}
+
+.site-header .author-line a:hover,
+.site-footer a:hover {
+  border-bottom-color: currentColor;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.profile-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 10px 15px;
+  border: 1px solid rgba(255,255,255,0.26);
+  border-radius: 999px;
+  background: rgba(255,255,255,0.08);
+  color: #fff;
+  text-decoration: none;
+  font-size: 14.5px;
+  font-weight: 850;
+  white-space: nowrap;
+  transition:
+    min-height 190ms ease,
+    padding 190ms ease,
+    font-size 190ms ease,
+    background 160ms ease,
+    border-color 160ms ease,
+    transform 160ms ease;
+}
+
+.profile-button:hover {
+  background: rgba(255,255,255,0.15);
+  border-color: rgba(255,255,255,0.38);
+  color: #fff;
+  text-decoration: none;
+  transform: translateY(-1px);
+}
+
+.version-card {
+  padding: 13px 18px;
+  border: 1px solid rgba(255,255,255,0.22);
+  border-radius: var(--shell-radius);
+  background: rgba(255,255,255,0.08);
+  min-width: 142px;
+  transition:
+    padding 190ms ease,
+    min-width 190ms ease,
+    border-radius 190ms ease;
+}
+
+.version-card span {
+  display: block;
+  color: var(--shell-text-muted);
+  font-size: 12.75px;
+  margin-bottom: 4px;
+  transition: font-size 190ms ease, margin 190ms ease;
+}
+
+.version-card strong {
+  display: block;
+  color: #fff;
+  font-size: 17.5px;
+  line-height: 1.1;
+  transition: font-size 190ms ease;
+}
+
+/* Estado compacto al hacer scroll.
+   Lo activa assets/js/tool-shell.js mediante .is-compact. */
+
+.site-header.is-compact {
+  padding: 6px 0;
+  box-shadow: 0 10px 24px rgba(8, 31, 27, 0.24);
+  border-bottom-color: rgba(255,255,255,0.10);
+}
+
+.site-header.is-compact .brand-block h1 {
+  font-size: clamp(23px, 2.1vw, 32px);
+  line-height: 0.94;
+  letter-spacing: -0.05em;
+  margin-bottom: 2px;
+}
+
+.site-header.is-compact .eyebrow {
+  margin-bottom: 2px;
+  font-size: 10px;
+}
+
+.site-header.is-compact .subtitle {
+  font-size: 12px;
+  opacity: 0.88;
+  transform: translateY(-1px);
+}
+
+.site-header.is-compact .author-line {
+  margin-top: 1px;
+  font-size: 11px;
+  opacity: 0.86;
+  transform: translateY(-1px);
+}
+
+.site-header.is-compact .profile-button {
+  min-height: 32px;
+  padding: 7px 11px;
+  font-size: 12px;
+}
+
+.site-header.is-compact .version-card {
+  padding: 7px 11px;
+  min-width: 104px;
+  border-radius: 14px;
+}
+
+.site-header.is-compact .version-card span {
+  font-size: 10px;
+  margin-bottom: 0;
+}
+
+.site-header.is-compact .version-card strong {
+  font-size: 13px;
+}
+
+/* ===== Footer común ===== */
+
+.site-footer {
+  margin-top: 18px;
+  padding: 24px 0 28px;
+  color: var(--shell-text-soft);
+  background: linear-gradient(135deg, var(--shell-brand-dark), #143f38 55%, var(--shell-brand));
+  border-top: 1px solid rgba(255,255,255,0.08);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size: 14px;
+  line-height: 1.42;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: minmax(260px, 1.2fr) minmax(260px, 1fr) minmax(260px, 1fr);
+  gap: 14px;
+  align-items: stretch;
+}
+
+.footer-brand,
+.footer-card {
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 16px;
+  background: rgba(255,255,255,0.06);
+  padding: 14px 15px;
+}
+
+.footer-brand .eyebrow {
+  margin: 0 0 6px;
+  color: var(--shell-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 11px;
+  font-weight: 850;
+}
+
+.footer-brand h2 {
+  margin: 0 0 6px;
+  color: #fff;
+  font-size: 22px;
+  line-height: 1.1;
+}
+
+.footer-brand p,
+.footer-card p {
+  margin: 6px 0 0;
+  line-height: 1.42;
+}
+
+.footer-card strong {
+  display: block;
+  color: #fff;
+  margin-bottom: 5px;
+}
+
+.footer-card em {
+  color: #fff;
+}
+
+.site-footer a {
+  color: #fff;
+  font-weight: 900;
+}
+
+/* ===== Responsive común ===== */
+
+@media (max-width: 1200px) {
+  .container {
+    width: min(100%, calc(100% - 46px));
+  }
+}
+
+@media (max-width: 980px) {
+  .header-grid,
+  .footer-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .header-actions {
+    justify-content: flex-start;
+  }
+
+  .site-header {
+    padding: 10px 0;
+  }
+
+  .site-header .brand-block h1 {
+    font-size: clamp(27px, 7vw, 39px);
+  }
+
+  .site-header.is-compact .brand-block h1 {
+    font-size: clamp(22px, 6vw, 30px);
+  }
+
+  .site-header .subtitle,
+  .site-header .author-line {
+    font-size: 12.5px;
+  }
+
+  .container {
+    width: min(100%, calc(100% - 28px));
+  }
+}
+
+@media (max-width: 680px) {
+  .container {
+    width: min(100%, calc(100% - 22px));
+  }
+
+  .site-header .brand-block h1 {
+    font-size: 28px;
+  }
+
+  .profile-button {
+    min-height: 40px;
+    padding: 8px 11px;
+    font-size: 13px;
+  }
+
+  .version-card {
+    min-width: 112px;
+    padding: 9px 12px;
+  }
+
+  .version-card span {
+    font-size: 10.5px;
+  }
+
+  .version-card strong {
+    font-size: 14px;
+  }
+
+  .site-footer {
+    padding: 22px 0 26px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-header,
+  .site-header *,
+  .profile-button,
+  .version-card,
+  .version-card * {
+    transition: none !important;
+  }
+}

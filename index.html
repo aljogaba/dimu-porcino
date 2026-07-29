@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DIMUPorcino | Laboratorio de Sistemas Porcícolas</title>
+  <meta name="description" content="Herramienta para diseñar muestreos sanitarios en territorios, granjas y proyectos de secuenciación porcina." />
+  <link rel="stylesheet" href="assets/css/tool-shell.css" />
+  <link rel="stylesheet" href="assets/css/styles.css" />
+</head>
+<body>
+  <header class="site-header" aria-label="Identidad del proyecto">
+    <div class="container header-grid">
+      <div class="brand-block">
+        <p class="eyebrow">Laboratorio de Sistemas Porcícolas</p>
+        <h1>DIMUPorcino</h1>
+        <p class="subtitle">Diseño Integral de Muestreo Porcino</p>
+        <p class="author-line">Autor: <a href="https://aljogaba.github.io/" target="_blank" rel="noopener">Alberto Jorge Galindo-Barboza</a></p>
+      </div>
+      <div class="header-actions">
+        <a class="profile-button" href="https://aljogaba.github.io/" target="_blank" rel="noopener">Perfil profesional</a>
+        <div class="version-card"><span>Versión</span><strong>0.5.2-dev</strong></div>
+      </div>
+    </div>
+  </header>
+
+  <main class="app-shell">
+    <section class="hero-card compact-hero">
+      <div>
+        <p class="eyebrow">Una ruta a la vez</p>
+        <h2>¿En qué nivel necesita diseñar el muestreo?</h2>
+        <p>Seleccione el nivel principal. La herramienta mostrará únicamente los datos necesarios para ese diseño.</p>
+      </div>
+      <div class="hero-rule">
+        <strong>Salida esperada</strong>
+        <span>Granjas → etapa o caseta → cerdos → muestras → secuencias, según el objetivo.</span>
+      </div>
+    </section>
+
+    <section class="mode-grid" aria-label="Nivel del estudio">
+      <button class="mode-card" type="button" data-mode="territory">
+        <span class="mode-index">01</span>
+        <strong>Estado, región o municipio</strong>
+        <small>Calcular granjas y cerdos dentro de cada granja.</small>
+      </button>
+      <button class="mode-card" type="button" data-mode="farm">
+        <span class="mode-index">02</span>
+        <strong>Una sola granja</strong>
+        <small>Definir la población, etapa o caseta y calcular cerdos.</small>
+      </button>
+      <button class="mode-card" type="button" data-mode="sequencing">
+        <span class="mode-index">03</span>
+        <strong>Secuenciación</strong>
+        <small>Calcular secuencias, rendimiento laboratorial y muestreo de origen.</small>
+      </button>
+    </section>
+
+    <div id="workspace" class="workspace-grid" hidden>
+      <aside class="side-nav" aria-label="Menú de navegación">
+        <div class="side-nav-title">Contenido</div>
+        <a href="#study-panel"><span>01</span> Diseño</a>
+        <a href="#population-panel"><span>02</span> Población</a>
+        <a href="#diagnostic-panel"><span>03</span> Diagnóstico</a>
+        <a href="#results-panel"><span>04</span> Resultado</a>
+        <a href="#methods-panel"><span>05</span> Métodos</a>
+      </aside>
+
+      <div class="main-column">
+        <section id="study-panel" class="panel nav-target"></section>
+        <section id="population-panel" class="panel nav-target"></section>
+        <section id="diagnostic-panel" class="panel nav-target"></section>
+
+        <div class="form-actions">
+          <button id="calculate-button" class="primary-button" type="button">Calcular diseño</button>
+          <button id="reset-button" class="secondary-button" type="button">Limpiar todo y volver al inicio</button>
+        </div>
+        <p id="form-message" class="form-message" hidden></p>
+
+        <section id="results-panel" class="panel nav-target" hidden>
+          <div class="panel-heading">
+            <div class="panel-heading-group"><div class="panel-step-badge">04</div><div><p class="eyebrow">Resultado</p><h2>Diseño propuesto</h2></div></div>
+          </div>
+          <div id="results-content"></div>
+        </section>
+
+        <section id="methods-panel" class="panel nav-target methods-panel">
+          <div class="panel-heading">
+            <div class="panel-heading-group"><div class="panel-step-badge">05</div><div><p class="eyebrow">Métodos</p><h2>Qué calcula cada ruta</h2></div></div>
+          </div>
+          <div class="method-grid">
+            <article>
+              <h3>Frecuencia de unidades positivas</h3>
+              <p>Calcula el número de granjas o animales para estimar una proporción con precisión y confianza definidas, con corrección por población finita.</p>
+            </article>
+            <article>
+              <h3>Presencia o ausencia</h3>
+              <p>Calcula cuántas unidades se necesitan para detectar al menos un positivo por encima de una prevalencia de diseño, considerando sensibilidad diagnóstica.</p>
+            </article>
+            <article>
+              <h3>Diseño en dos niveles</h3>
+              <p>Separa el número de granjas del número de cerdos por granja. Los cerdos clasifican a la granja; las granjas representan al territorio.</p>
+            </article>
+            <article>
+              <h3>Secuenciación</h3>
+              <p>Parte del número de secuencias utilizables y retrocede por calidad, secuenciación, amplificación, positividad y unidad epidemiológica.</p>
+            </article>
+          </div>
+          <details class="reference-box">
+            <summary>Referencias y fundamentos</summary>
+            <ol>
+              <li><a href="https://www.woah.org/fileadmin/Home/eng/Health_standards/tahc/current/en_chapitre_surveillance_general.htm" target="_blank" rel="noopener">WOAH. <em>Terrestrial Animal Health Code, Chapter 1.4: Animal health surveillance</em></a>.</li>
+              <li><a href="https://www.fao.org/4/x0413e/X0413E08.htm" target="_blank" rel="noopener">FAO. <em>Sample size considerations</em></a> y métodos de muestreo multietápico.</li>
+              <li><a href="https://pubmed.ncbi.nlm.nih.gov/9541948/" target="_blank" rel="noopener">Cameron AR, Baldock FC. Two-stage sampling in surveys to substantiate freedom from disease</a>. <em>Prev Vet Med</em>. 1998.</li>
+              <li><a href="https://pubmed.ncbi.nlm.nih.gov/37105175/" target="_blank" rel="noopener">Wohl S et al. Sample size calculations for pathogen variant surveillance in the presence of biological and systematic biases</a>. <em>Cell Reports Medicine</em>. 2023.</li>
+            </ol>
+          </details>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer" aria-label="Créditos, cita y licencia">
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <p class="eyebrow">Laboratorio de Sistemas Porcícolas</p>
+        <h2>DIMUPorcino</h2>
+        <p>Diseño Integral de Muestreo Porcino. Herramienta para planear muestreos epidemiológicos, diagnósticos y moleculares en porcicultura, desarrollada por <a href="https://aljogaba.github.io/" target="_blank" rel="noopener">Alberto Jorge Galindo-Barboza</a>.</p>
+      </div>
+      <div class="footer-card">
+        <strong>Cita sugerida</strong>
+        <p>Galindo-Barboza, A. J. (2026). <em>DIMUPorcino: Diseño Integral de Muestreo Porcino</em> (v0.5.2-dev). Laboratorio de Sistemas Porcícolas.</p>
+      </div>
+      <div class="footer-card">
+        <strong>Licencia y derechos</strong>
+        <p>© 2026 Alberto Jorge Galindo-Barboza. Todos los derechos reservados.</p>
+        <p>Uso, distribución, modificación o reproducción sujetos a autorización expresa del autor.</p>
+        <p><a href="https://aljogaba.github.io/" target="_blank" rel="noopener">Perfil profesional</a></p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/modules/calculators.js"></script>
+  <script src="js/modules/inventory.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/tool-shell.js"></script>
+</body>
+</html>
