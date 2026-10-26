@@ -1,6 +1,6 @@
 {
-  "name": "muestreo-sanitario-porcino",
-  "version": "0.4.0-dev",
+  "name": "dimu-porcino",
+  "version": "0.5.2-dev",
   "private": true,
   "scripts": { "test": "node tests/calculators.test.js" }
 }
