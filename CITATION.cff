@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+message: "Si utiliza DIMUPorcino, cite este software como se indica."
+title: "DIMUPorcino: Diseño Integral de Muestreo Porcino"
+type: software
+version: "0.5.2-dev"
+authors:
+  - family-names: "Galindo-Barboza"
+    given-names: "Alberto Jorge"
+year: 2026
+url: "https://aljogaba.github.io/dimu-porcino/"
+repository-code: "https://github.com/aljogaba/dimu-porcino"
+abstract: "Herramienta para diseñar muestreos sanitarios en poblaciones porcinas, granjas y esquemas de secuenciación."
+keywords:
+  - muestreo
+  - epidemiología veterinaria
+  - sanidad porcina
+  - tamaño de muestra
+  - vigilancia sanitaria
+  - secuenciación
