@@ -404,21 +404,29 @@
     }
 
     if (scope === "positive") {
+      const available = numberOf("seqPositiveAvailable");
+      validatePositive(available, "El número de muestras positivas disponibles");
       const funnel = calc.laboratoryFunnel({ targetSequences: target, startPositivity: 100, amplificationSuccess: numberOf("seqAmplification"), sequencingSuccess: numberOf("seqSequencing"), qualitySuccess: numberOf("seqQuality"), confidence: planningConfidence });
+      const expectedFromAvailable = available * funnel.overall;
+      const achievedFromAvailable = calc.probabilityAtLeast(target, Math.max(1, Math.floor(available)), Math.max(1e-9, funnel.overall));
+      const localWarnings = [];
+      if (available < funnel.guaranteedInitial) localWarnings.push(`Con ${formatInt(available)} muestras positivas disponibles no se alcanza la garantía de ${formatNumber(planningConfidence * 100, 0)} % para obtener ${formatInt(target)} secuencias utilizables.`);
+      else localWarnings.push(`Con ${formatInt(available)} muestras positivas disponibles, la meta es alcanzable bajo los supuestos seleccionados.`);
+      localWarnings.push("El cálculo supone que las pérdidas entre amplificación, secuenciación y control de calidad se comportan aproximadamente de forma independiente.");
       return {
         primary: funnel.guaranteedInitial,
-        primaryUnit: "muestras positivas",
-        explanation: `${formatInt(funnel.guaranteedInitial)} muestras positivas para obtener al menos ${formatInt(target)} secuencias utilizables con ${formatNumber(planningConfidence * 100, 0)} % de probabilidad.`,
-        details: [["Secuencias utilizables requeridas", formatInt(target)], ["Rendimiento laboratorial global", percent(funnel.overall)], ["Muestras esperadas por promedio", formatInt(funnel.expectedInitial)], ["Muestras con garantía probabilística", formatInt(funnel.guaranteedInitial)]],
-        warnings: ["El cálculo supone que las muestras positivas son elegibles para el mismo protocolo y que las pérdidas se comportan aproximadamente de forma independiente."],
-        report: `Para obtener al menos ${formatInt(target)} secuencias utilizables se recomienda iniciar con ${formatInt(funnel.guaranteedInitial)} muestras positivas. El cálculo incorpora ${formatNumber(numberOf("seqAmplification"), 1)} % de éxito de amplificación, ${formatNumber(numberOf("seqSequencing"), 1)} % de éxito de secuenciación y ${formatNumber(numberOf("seqQuality"), 1)} % de aceptación por calidad, con ${formatNumber(planningConfidence * 100, 0)} % de probabilidad de alcanzar la meta.`,
-        funnel,
+        primaryUnit: "muestras positivas requeridas",
+        explanation: `${formatInt(funnel.guaranteedInitial)} muestras positivas para obtener al menos ${formatInt(target)} secuencias utilizables con ${formatNumber(planningConfidence * 100, 0)} % de probabilidad. Usted dispone de ${formatInt(available)}.`,
+        details: [["Muestras positivas disponibles", formatInt(available)], ["Secuencias utilizables requeridas", formatInt(target)], ["Rendimiento molecular global", percent(funnel.overall)], ["Muestras positivas requeridas con garantía", formatInt(funnel.guaranteedInitial)], ["Secuencias esperadas con las disponibles", formatNumber(expectedFromAvailable, 1)], ["Probabilidad de alcanzar la meta con las disponibles", percent(achievedFromAvailable)]],
+        warnings: localWarnings,
+        report: `Se dispone de ${formatInt(available)} ${valueOf("seqPositiveLabel") || "muestras"} ya clasificadas como positivas. Con ${formatNumber(numberOf("seqAmplification"), 1)} % de éxito de amplificación del blanco, ${formatNumber(numberOf("seqSequencing"), 1)} % de éxito de secuenciación y ${formatNumber(numberOf("seqQuality"), 1)} % de éxito de ensamble y control de calidad, se requieren ${formatInt(funnel.guaranteedInitial)} muestras positivas para obtener al menos ${formatInt(target)} secuencias utilizables con ${formatNumber(planningConfidence * 100, 0)} % de probabilidad. Con el banco disponible se esperan aproximadamente ${formatNumber(expectedFromAvailable, 1)} secuencias utilizables y la probabilidad de alcanzar la meta es ${percent(achievedFromAvailable)}.`,
+        funnel: { ...funnel, stagesExpected: [available, available, available * amp, available * amp * seq, expectedFromAvailable] },
         formulaHtml: sequencingFormulaHtml("positive"),
         flow: [
-          { label: "Muestras positivas", value: `${formatInt(funnel.guaranteedInitial)}` },
-          { label: "Amplificación", value: `${formatNumber(numberOf("seqAmplification"),1)} %` },
-          { label: "Secuenciación", value: `${formatNumber(numberOf("seqSequencing"),1)} %` },
-          { label: "Meta final", value: `${formatInt(target)} secuencias` }
+          { label: "Muestras positivas disponibles", value: `${formatInt(available)}` },
+          { label: "Utilizables esperadas", value: `${formatInt(expectedFromAvailable)}` },
+          { label: "Meta final", value: `${formatInt(target)} secuencias` },
+          { label: "Positivas requeridas", value: `${formatInt(funnel.guaranteedInitial)}` }
         ]
       };
     }
