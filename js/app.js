@@ -392,14 +392,14 @@
             </div>
           </div>
           <div class="choice-grid">
-            ${choice("sequenceScope", "positive", "Muestras positivas disponibles", "Parte de muestras ya clasificadas como positivas; el embudo comienza después del diagnóstico.")}
             ${choice("sequenceScope", "total", "Muestras totales disponibles", "Parte de un conjunto de muestras aún no condicionado a positividad y aplica el rendimiento hasta obtener secuencias utilizables.")}
+            ${choice("sequenceScope", "positive", "Muestras positivas disponibles", "Parte de muestras ya clasificadas como positivas; el embudo comienza después del diagnóstico.")}
           </div>
         </div>
       </div>`;
 
     populationPanel.innerHTML = `
-      ${heading("02", "Origen", "Defina la población de la que saldrán las secuencias")}
+      ${heading("02", "Origen", "Defina el origen del material del que saldrán las secuencias")}
       <div id="sequence-territory-fields">
         <div class="input-grid four">
           ${selectField("seqTerritoryLevel", "Nivel territorial", [["state","Estado"],["region","Región"],["municipality","Municipio"]], "region")}
@@ -429,9 +429,25 @@
       </div>
       <div id="sequence-total-fields" hidden>
         <div class="input-grid three">
-          ${field("seqTotalAvailable", "Muestras totales disponibles", 844, { min: 1, step: 1 })}
-          ${field("seqTotalPositivity", "Frecuencia esperada de positivas (%)", 46.5, { min: .01, max: 99.99 })}
-          ${field("seqTotalLabel", "Tipo de muestra", "Pools", { type: "text", step: 1 })}
+          ${selectField("seqTotalLabel", "Tipo de muestra o material", [
+            ["Muestras individuales","Muestras individuales"],
+            ["Suero individual","Suero individual"],
+            ["Sangre individual","Sangre individual"],
+            ["Hisopo individual","Hisopo individual"],
+            ["Tejido individual","Tejido individual"],
+            ["Pools","Pools"],
+            ["Fluido oral","Fluido oral"],
+            ["Fluido de procesamiento","Fluido de procesamiento"],
+            ["Muestra colectiva","Muestra colectiva"],
+            ["Otro","Otro"]
+          ], "Pools", "Este dato es descriptivo y se utiliza para contextualizar e interpretar el resultado.")}
+          ${field("seqTotalAvailable", "Número de muestras totales disponibles", 844, { min: 1, step: 1, help: "Número de unidades de muestra disponibles al inicio del proceso molecular." })}
+          ${field("seqTotalPositivity", "Positividad esperada de las muestras (%)", 46.5, { min: .01, max: 99.99, help: "Proporción de estas muestras que se espera resulte positiva con la prueba utilizada." })}
+        </div>
+        <div class="material-info-note">
+          <strong>Cómo definir la positividad esperada</strong>
+          <p>Utilice preferentemente la proporción de muestras positivas observada previamente en material comparable: misma población de origen, tipo de muestra, prueba diagnóstica y periodo de estudio. Cuando no existan datos previos, puede utilizar información piloto o histórica claramente documentada.</p>
+          <p><strong>Si trabaja con pools o muestras colectivas:</strong> introduzca la proporción esperada de pools o unidades colectivas positivas, no la prevalencia individual de animales.</p>
         </div>
       </div>`;
 
