@@ -32,7 +32,16 @@ El resultado representa secuencias utilizables e independientes bajo los supuest
 
 ## 5. Embudo laboratorial
 
-El rendimiento global es el producto de las probabilidades sucesivas de positividad, amplificación, secuenciación y aceptación por calidad. La herramienta diferencia el tamaño esperado promedio del tamaño necesario para alcanzar la meta con una probabilidad especificada.
+El rendimiento global es el producto de las probabilidades sucesivas de positividad, amplificación del blanco de secuenciación, éxito de secuenciación y éxito de ensamble/control de calidad.
+
+La ruta puede utilizarse de dos maneras:
+
+- **Meta definida:** calcular cuántas muestras iniciales se requieren para alcanzar un número objetivo de secuencias utilizables con una probabilidad especificada.
+- **Banco de muestras disponible:** estimar cuántas secuencias utilizables se esperan obtener a partir de un número conocido de muestras.
+
+Cuando se parte de muestras totales ya obtenidas y se proporciona una positividad esperada observada o sustentada, esa positividad representa la salida del tamizaje diagnóstico; no se vuelve a multiplicar por una sensibilidad diagnóstica adicional. Cuando se parte de muestras ya positivas, el embudo comienza directamente en la amplificación del blanco.
+
+La estimación de rendimiento es un valor esperado y no constituye una garantía de obtener exactamente ese número de secuencias.
 
 ## 6. Inventario productivo básico
 
