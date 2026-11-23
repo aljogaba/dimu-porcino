@@ -43,6 +43,16 @@ Cuando se parte de muestras totales ya obtenidas y se proporciona una positivida
 
 La estimación de rendimiento es un valor esperado y no constituye una garantía de obtener exactamente ese número de secuencias.
 
+### Definición operativa de los rendimientos
+
+Cada porcentaje es **condicional**: su denominador corresponde únicamente a las unidades que superaron la etapa anterior.
+
+- **Éxito de amplificación del blanco:** proporción de muestras elegibles que producen un amplicón del tamaño esperado, que contiene la región objetivo y mantiene calidad suficiente para purificación y secuenciación.
+- **Éxito de secuenciación:** proporción de amplicones purificados que generan lecturas aprovechables mediante Sanger u otra plataforma.
+- **Éxito de ensamble y control de calidad:** proporción de resultados de secuenciación cuyas lecturas permiten construir una secuencia consenso que cubre la región objetivo o la longitud definida por el estudio y cumple sus criterios de calidad.
+
+Los porcentajes deben provenir preferentemente de rendimientos históricos del mismo laboratorio con matrices, blanco, primers, purificación y plataforma comparables. En ausencia de información histórica, los datos piloto o supuestos utilizados deben documentarse explícitamente como escenarios de planeación.
+
 ## 6. Inventario productivo básico
 
 `partos/semana = hembras × partos por hembra por año / 52`
