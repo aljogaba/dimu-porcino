@@ -337,15 +337,22 @@
 
   function renderSequencing() {
     studyPanel.innerHTML = `
-      ${heading("01", "Meta molecular", "¿Cuál es el objetivo molecular?", "Primero defina cuántas secuencias utilizables necesita. Después indique desde qué población o conjunto de muestras comenzará la planeación.")}
+      ${heading("01", "Meta molecular", "¿Qué desea resolver con la secuenciación?", "Puede planear cómo alcanzar una meta de secuencias o, si ya cuenta con un banco de muestras, estimar cuántas secuencias utilizables podría obtener.")}
       <div class="choice-grid">
-        ${choice("sequenceTargetMode", "manual", "Obtener un número objetivo de secuencias utilizables", "Meta operativa principal. Usted define cuántas secuencias finales necesita y DIMUPorcino calcula hacia atrás cómo obtenerlas.", true)}
+        ${choice("sequenceTargetMode", "manual", "Alcanzar un número objetivo de secuencias utilizables", "Usted define cuántas secuencias finales necesita y DIMUPorcino calcula hacia atrás cómo obtenerlas.", true)}
+        ${choice("sequenceTargetMode", "yield", "Estimar el rendimiento de un banco de muestras", "Parte de muestras ya obtenidas y estima cuántas secuencias utilizables podrían producirse con los rendimientos seleccionados.")}
       </div>
       <div id="manual-target-fields" class="subpanel">
         ${field("manualSequences", "Secuencias utilizables requeridas", 100, { min: 1, step: 1, help: "Este número lo define el usuario según las necesidades de su estudio; DIMUPorcino no lo recomienda automáticamente." })}
         <div class="method-warning">
           <strong>Importante sobre esta meta</strong>
           <p>DIMUPorcino utiliza este número como una meta operativa. No implica que esa cantidad de secuencias sea suficiente para representar diversidad genética, estimar frecuencias de linajes o realizar inferencia sobre una granja, región o territorio. Esa suficiencia depende del objetivo científico y del diseño del estudio.</p>
+        </div>
+      </div>
+      <div id="yield-target-fields" class="subpanel" hidden>
+        <div class="method-info">
+          <strong>Estimación de rendimiento</strong>
+          <p>No necesita fijar previamente un número de secuencias. DIMUPorcino utilizará el tamaño del banco de muestras y los rendimientos del proceso para estimar la salida esperada de secuencias utilizables.</p>
         </div>
       </div>
       <details id="experimental-molecular-goals" class="reference-box">
@@ -369,7 +376,7 @@
         <h3>¿Desde dónde comienza la planeación?</h3>
         <p class="field-help">El punto de partida determina qué parte del proceso debe diseñar DIMUPorcino para alcanzar la meta de secuencias.</p>
 
-        <div class="scope-group">
+        <div id="field-scope-group" class="scope-group">
           <div class="scope-group-heading">
             <span class="scope-tag">A</span>
             <div>
@@ -383,7 +390,7 @@
           </div>
         </div>
 
-        <div class="scope-group">
+        <div id="lab-scope-group" class="scope-group">
           <div class="scope-group-heading">
             <span class="scope-tag">B</span>
             <div>
