@@ -343,7 +343,7 @@
         ${choice("sequenceTargetMode", "yield", "Estimar el rendimiento de un banco de muestras", "Parte de muestras ya obtenidas y estima cuántas secuencias utilizables podrían producirse con los rendimientos seleccionados.")}
       </div>
       <div id="manual-target-fields" class="subpanel">
-        ${field("manualSequences", "Secuencias utilizables requeridas", 100, { min: 1, step: 1, help: "Este número lo define el usuario según las necesidades de su estudio; DIMUPorcino no lo recomienda automáticamente." })}
+        ${field("manualSequences", "Secuencias utilizables requeridas", "", { min: 1, step: 1, placeholder: "Ingrese número", help: "Este número lo define el usuario según las necesidades de su estudio; DIMUPorcino no lo recomienda automáticamente." })}
         <div class="method-warning">
           <strong>Importante sobre esta meta</strong>
           <p>DIMUPorcino utiliza este número como una meta operativa. No implica que esa cantidad de secuencias sea suficiente para representar diversidad genética, estimar frecuencias de linajes o realizar inferencia sobre una granja, región o territorio. Esa suficiencia depende del objetivo científico y del diseño del estudio.</p>
@@ -434,6 +434,7 @@
       <div id="sequence-positive-fields" hidden>
         <div class="input-grid two">
           ${selectField("seqPositiveLabel", "Tipo de muestra o material", [
+            ["","Seleccione..."],
             ["Muestras individuales","Muestras individuales"],
             ["Suero individual","Suero individual"],
             ["Sangre individual","Sangre individual"],
@@ -444,14 +445,15 @@
             ["Fluido de procesamiento","Fluido de procesamiento"],
             ["Muestra colectiva","Muestra colectiva"],
             ["Otro","Otro"]
-          ], "Muestras individuales", "Este dato es descriptivo y contextualiza la interpretación del resultado.")}
-          ${field("seqPositiveAvailable", "Número de muestras positivas disponibles", 100, { min: 1, step: 1, help: "Estas muestras ya superaron el tamizaje o criterio diagnóstico utilizado para clasificarlas como positivas." })}
+          ], "", "Este dato es descriptivo y contextualiza la interpretación del resultado.")}
+          ${field("seqPositiveAvailable", "Número de muestras positivas disponibles", "", { min: 1, step: 1, placeholder: "Ingrese número", help: "Estas muestras ya superaron el tamizaje o criterio diagnóstico utilizado para clasificarlas como positivas." })}
         </div>
         <p class="section-note" style="margin-top:14px">La planeación comienza después del diagnóstico; no se vuelve a aplicar una tasa de positividad a estas muestras.</p>
       </div>
       <div id="sequence-total-fields" hidden>
         <div class="input-grid three">
           ${selectField("seqTotalLabel", "Tipo de muestra o material", [
+            ["","Seleccione..."],
             ["Muestras individuales","Muestras individuales"],
             ["Suero individual","Suero individual"],
             ["Sangre individual","Sangre individual"],
@@ -462,9 +464,9 @@
             ["Fluido de procesamiento","Fluido de procesamiento"],
             ["Muestra colectiva","Muestra colectiva"],
             ["Otro","Otro"]
-          ], "Pools", "Este dato es descriptivo y se utiliza para contextualizar e interpretar el resultado.")}
-          ${field("seqTotalAvailable", "Número de muestras totales disponibles", 844, { min: 1, step: 1, help: "Número de unidades de muestra disponibles al inicio del proceso molecular." })}
-          ${field("seqTotalPositivity", "Positividad esperada de las muestras (%)", 46.5, { min: .01, max: 99.99, help: "Proporción de estas muestras que se espera resulte positiva con la prueba utilizada." })}
+          ], "", "Este dato es descriptivo y se utiliza para contextualizar e interpretar el resultado.")}
+          ${field("seqTotalAvailable", "Número de muestras totales disponibles", "", { min: 1, step: 1, placeholder: "Ingrese número", help: "Número de unidades de muestra disponibles al inicio del proceso molecular." })}
+          ${field("seqTotalPositivity", "Positividad esperada de las muestras (%)", "", { min: .01, max: 100, placeholder: "Ingrese %", help: "Proporción de estas muestras que se espera resulte positiva con la prueba utilizada." })}
         </div>
         <div class="material-info-note">
           <strong>Cómo definir la positividad esperada</strong>
@@ -480,14 +482,21 @@
         <div id="sequence-lab-route" class="process-route"></div>
       </div>
       <div class="input-grid four">
-        ${field("seqTestSe", "Sensibilidad de detección (%)", 90, { min: .1, max: 100, help: "Se mantiene únicamente para las rutas que parten de animales o granjas y todavía requieren una etapa diagnóstica." })}
-        ${field("seqAmplification", "Éxito de amplificación del blanco de secuenciación (%)", 90, { min: .1, max: 100, help: "Proporción de muestras elegibles que producen un amplicón adecuado para continuar a secuenciación." })}
-        ${field("seqSequencing", "Éxito de secuenciación (%)", 70, { min: .1, max: 100, help: "Proporción de amplicones procesados que generan lecturas suficientes para intentar construir una secuencia." })}
-        ${field("seqQuality", "Éxito de ensamble y control de calidad (%)", 95, { min: .1, max: 100, help: "Proporción de resultados de secuenciación que terminan como una secuencia consenso utilizable." })}
+        ${field("seqTestSe", "Sensibilidad de detección (%)", "", { min: .1, max: 100, placeholder: "Ingrese %", help: "Se mantiene únicamente para las rutas que parten de animales o granjas y todavía requieren una etapa diagnóstica." })}
+        ${field("seqAmplification", "Éxito de amplificación del blanco de secuenciación (%)", "", { min: .1, max: 100, placeholder: "Ingrese %", help: "Proporción de muestras elegibles que producen un amplicón del tamaño esperado, que contiene la región objetivo y conserva calidad suficiente para purificación y secuenciación." })}
+        ${field("seqSequencing", "Éxito de secuenciación (%)", "", { min: .1, max: 100, placeholder: "Ingrese %", help: "Proporción de amplicones purificados enviados a Sanger u otra plataforma que generan lecturas aprovechables para la región objetivo." })}
+        ${field("seqQuality", "Éxito de ensamble y control de calidad (%)", "", { min: .1, max: 100, placeholder: "Ingrese %", help: "Proporción de resultados cuyas lecturas permiten ensamblar una secuencia consenso que cubre la región objetivo y cumple los criterios de calidad definidos para el estudio." })}
+      </div>
+      <div class="molecular-stage-note">
+        <strong>Cómo interpretar estos rendimientos</strong>
+        <p><strong>Amplificación:</strong> el amplicón debe tener el tamaño esperado e incluir la región objetivo que se desea secuenciar. La purificación posterior debe conservar material suficiente y adecuado para la plataforma elegida.</p>
+        <p><strong>Secuenciación:</strong> Sanger u otra plataforma debe generar lecturas aprovechables del blanco. En Sanger, esto puede implicar lecturas forward y reverse suficientemente informativas para continuar al ensamble.</p>
+        <p><strong>Ensamble y calidad:</strong> las lecturas deben permitir reconstruir la región objetivo completa o la longitud definida por el estudio, con los criterios de calidad y ambigüedad establecidos por el proyecto.</p>
+        <p><strong>Fuente de los porcentajes:</strong> utilice preferentemente rendimientos históricos del mismo laboratorio con tipo de muestra, blanco, primers, purificación y plataforma comparables. Si no existen, documente claramente que se trata de datos piloto o escenarios de planeación.</p>
       </div>
       <div class="input-grid two" style="margin-top:14px">
         <div id="seq-planning-confidence-wrap">
-          ${selectField("seqPlanningConfidence", "Probabilidad deseada de alcanzar la meta", [["0.90","90 %"],["0.95","95 %"],["0.99","99 %"]], "0.95", "Se utiliza cuando existe una meta explícita de secuencias; no aplica a la estimación simple del rendimiento esperado.")}
+          ${selectField("seqPlanningConfidence", "Probabilidad deseada de alcanzar la meta", [["","Seleccione..."],["0.90","90 %"],["0.95","95 %"],["0.99","99 %"]], "", "Se utiliza cuando existe una meta explícita de secuencias; no aplica a la estimación simple del rendimiento esperado.")}
         </div>
         <div id="seq-independence-wrap">
           ${selectField("seqIndependence", "Cómo contará las secuencias", [["farm","Una secuencia por granja o evento"],["sample","Cada muestra positiva elegible cuenta por separado"]], "farm", "Este criterio se revisará en las rutas de diseño de campo; no modifica el rendimiento puramente laboratorial de un banco de muestras.")}
@@ -549,6 +558,14 @@
 
   function validatePositive(value, label) {
     if (!Number.isFinite(value) || value <= 0) throw new Error(`${label} debe ser mayor que cero.`);
+  }
+
+  function requirePercent(id, label) {
+    const raw = valueOf(id).trim();
+    if (!raw) throw new Error(`Ingrese ${label.toLowerCase()}.`);
+    const value = Number(raw);
+    if (!Number.isFinite(value) || value <= 0 || value > 100) throw new Error(`${label} debe estar entre 0 y 100 %.`);
+    return value;
   }
 
   function selectedFarmGroups() {
@@ -711,10 +728,18 @@
     const scope = checkedValue("sequenceScope");
     const targetMode = checkedValue("sequenceTargetMode");
     const target = sequencingTarget();
-    const amp = numberOf("seqAmplification") / 100;
-    const seq = numberOf("seqSequencing") / 100;
-    const quality = numberOf("seqQuality") / 100;
-    const planningConfidence = Number(valueOf("seqPlanningConfidence"));
+
+    const ampPct = requirePercent("seqAmplification", "Éxito de amplificación del blanco");
+    const seqPct = requirePercent("seqSequencing", "Éxito de secuenciación");
+    const qualityPct = requirePercent("seqQuality", "Éxito de ensamble y control de calidad");
+    if (scope === "territory" || scope === "farm") requirePercent("seqTestSe", "Sensibilidad de detección");
+    if (scope === "total") requirePercent("seqTotalPositivity", "Positividad esperada de las muestras");
+
+    const amp = ampPct / 100;
+    const seq = seqPct / 100;
+    const quality = qualityPct / 100;
+    const planningConfidence = targetMode === "yield" ? null : Number(valueOf("seqPlanningConfidence"));
+    if (targetMode !== "yield" && !planningConfidence) throw new Error("Seleccione la probabilidad deseada de alcanzar la meta.");
     const warnings = [];
 
     if (targetMode === "yield" && scope === "positive") {
