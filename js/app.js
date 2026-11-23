@@ -337,24 +337,39 @@
 
   function renderSequencing() {
     studyPanel.innerHTML = `
-      ${heading("01", "Secuenciación", "¿Desde qué nivel comienza la planeación?", "La herramienta calculará primero las secuencias utilizables y después retrocederá por las pérdidas del laboratorio y del muestreo.")}
+      ${heading("01", "Meta molecular", "¿Cuál es el objetivo molecular?", "Primero defina cuántas secuencias utilizables necesita. Después indique desde qué población o conjunto de muestras comenzará la planeación.")}
       <div class="choice-grid">
-        ${choice("sequenceScope", "territory", "Estado, región o municipio", "Calcula granjas, cerdos por granja y secuencias representativas.", true)}
-        ${choice("sequenceScope", "farm", "Una sola granja", "Calcula cerdos o muestras iniciales dentro de una población elegida.")}
-        ${choice("sequenceScope", "positive", "Muestras positivas disponibles", "Calcula cuántas muestras positivas deben entrar a amplificación y secuenciación.")}
-        ${choice("sequenceScope", "total", "Muestras totales disponibles", "Parte del total de muestras, aplica la frecuencia esperada de positivas y estima la salida molecular.")}
+        ${choice("sequenceTargetMode", "manual", "Obtener un número objetivo de secuencias utilizables", "Meta operativa principal. Usted define cuántas secuencias finales necesita y DIMUPorcino calcula hacia atrás cómo obtenerlas.", true)}
       </div>
+      <div id="manual-target-fields" class="subpanel">
+        ${field("manualSequences", "Secuencias utilizables requeridas", 100, { min: 1, step: 1, help: "Este número lo define el usuario según las necesidades de su estudio; DIMUPorcino no lo recomienda automáticamente." })}
+      </div>
+      <details id="experimental-molecular-goals" class="reference-box">
+        <summary>Opciones inferenciales experimentales</summary>
+        <p class="section-note"><strong>Advertencia metodológica.</strong> Estas opciones se mantienen como apoyo para explorar y comprender diseños moleculares. Sus resultados dependen de supuestos de representatividad e independencia de las secuencias y no deben interpretarse automáticamente como inferencia sobre animales, granjas o territorios.</p>
+        <div class="choice-grid" style="margin-top:14px">
+          ${choice("sequenceTargetMode", "variant", "Detectar un linaje o variante", "Calcula cuántas secuencias utilizables se requieren para tener una probabilidad definida de encontrar al menos una secuencia de un linaje presente a una frecuencia mínima.")}
+          ${choice("sequenceTargetMode", "frequency", "Estimar la frecuencia de un linaje o variante", "Calcula cuántas secuencias utilizables se requieren para estimar una proporción con precisión y confianza definidas.")}
+        </div>
+        <div id="variant-target-fields" class="input-grid two" hidden>
+          ${field("variantFrequency", "Frecuencia mínima que desea ser capaz de detectar (%)", 5, { min: .01, max: 99.99, help: "Debe sustentarse en información previa, datos piloto o un umbral epidemiológicamente relevante." })}
+          ${selectField("variantConfidence", "Probabilidad deseada de encontrar al menos una secuencia del linaje", [["0.90","90 %"],["0.95","95 %"],["0.99","99 %"]], "0.95")}
+        </div>
+        <div id="frequency-target-fields" class="input-grid three" hidden>
+          ${field("lineageExpectedFrequency", "Frecuencia esperada del linaje (%)", 50, { min: .01, max: 99.99, help: "Valor esperado en el conjunto de secuencias que se desea representar." })}
+          ${field("lineagePrecision", "Precisión absoluta (± %)", 5, { min: .1, max: 50 })}
+          ${selectField("lineageConfidence", "Confianza de la estimación", [["0.90","90 %"],["0.95","95 %"],["0.99","99 %"]], "0.95")}
+        </div>
+      </details>
       <div class="subpanel">
-        <h3>Meta molecular</h3>
-        <div class="inline-choice">
-          <label><input type="radio" name="sequenceTargetMode" value="variant" checked /> Detectar un linaje o variante</label>
-          <label><input type="radio" name="sequenceTargetMode" value="manual" /> Especificar secuencias utilizables</label>
+        <h3>¿Desde dónde comienza la planeación?</h3>
+        <p class="field-help">El punto de partida determina cómo se retrocede desde la meta de secuencias hasta granjas, animales o muestras.</p>
+        <div class="choice-grid">
+          ${choice("sequenceScope", "territory", "Estado, región o municipio", "Calcula granjas, cerdos por granja y el proceso necesario para alcanzar la meta de secuencias.", true)}
+          ${choice("sequenceScope", "farm", "Una sola granja", "Calcula cerdos o muestras iniciales dentro de una población elegida.")}
+          ${choice("sequenceScope", "positive", "Muestras positivas disponibles", "Parte de muestras ya clasificadas como positivas y calcula el rendimiento molecular posterior.")}
+          ${choice("sequenceScope", "total", "Muestras totales disponibles", "Parte del total de muestras y aplica positividad y rendimiento molecular hasta la secuencia utilizable.")}
         </div>
-        <div id="variant-target-fields" class="input-grid two">
-          ${field("variantFrequency", "Frecuencia mínima del linaje (%)", 5, { min: .01, max: 99.99 })}
-          ${selectField("variantConfidence", "Probabilidad de detectarlo", [["0.90","90 %"],["0.95","95 %"],["0.99","99 %"]], "0.95")}
-        </div>
-        <div id="manual-target-fields" hidden>${field("manualSequences", "Secuencias utilizables requeridas", 59, { min: 1, step: 1 })}</div>
       </div>`;
 
     populationPanel.innerHTML = `
@@ -418,9 +433,11 @@
   }
 
   function updateSequenceTargetMode() {
-    const variant = checkedValue("sequenceTargetMode") === "variant";
-    $("#variant-target-fields").hidden = !variant;
-    $("#manual-target-fields").hidden = variant;
+    const mode = checkedValue("sequenceTargetMode");
+    $("#manual-target-fields").hidden = mode !== "manual";
+    $("#variant-target-fields").hidden = mode !== "variant";
+    $("#frequency-target-fields").hidden = mode !== "frequency";
+    if (mode !== "manual") $("#experimental-molecular-goals").open = true;
   }
 
   function updateSequenceScope() {
@@ -572,8 +589,23 @@
   }
 
   function sequencingTarget() {
-    if (checkedValue("sequenceTargetMode") === "manual") return Math.max(1, Math.ceil(numberOf("manualSequences")));
-    return calc.variantDetection({ variantFrequency: numberOf("variantFrequency"), confidence: Number(valueOf("variantConfidence")) }).usableSequences;
+    const mode = checkedValue("sequenceTargetMode");
+    if (mode === "manual") {
+      const target = numberOf("manualSequences");
+      validatePositive(target, "Las secuencias utilizables requeridas");
+      return Math.ceil(target);
+    }
+    if (mode === "frequency") {
+      return calc.prevalenceSample({
+        expectedPrevalence: numberOf("lineageExpectedFrequency"),
+        precision: numberOf("lineagePrecision"),
+        confidence: Number(valueOf("lineageConfidence"))
+      }).final;
+    }
+    return calc.variantDetection({
+      variantFrequency: numberOf("variantFrequency"),
+      confidence: Number(valueOf("variantConfidence"))
+    }).usableSequences;
   }
 
   function calculateSequencing() {
@@ -712,7 +744,15 @@
   }
 
   function sequencingFormulaHtml(scope) {
-    const target = formulaFigure("assets/img/formulas/seq_target.svg", "Meta de secuencias", "Estima cuántas secuencias utilizables se necesitan para detectar un linaje o variante con la probabilidad deseada.", ["C = probabilidad deseada de detección", "p = frecuencia mínima del linaje o variante", "n = secuencias utilizables requeridas"]);
+    const targetMode = checkedValue("sequenceTargetMode");
+    let target;
+    if (targetMode === "variant") {
+      target = formulaFigure("assets/img/formulas/seq_target.svg", "Detección exploratoria de linaje o variante", "Calcula cuántas secuencias utilizables se requieren para tener la probabilidad deseada de encontrar al menos una secuencia de un linaje presente a una frecuencia mínima.", ["C = probabilidad deseada de encontrar al menos una secuencia", "p = frecuencia mínima del linaje o variante en el conjunto representado", "n = secuencias utilizables requeridas"]);
+    } else if (targetMode === "frequency") {
+      target = formulaFigure("assets/img/formulas/prevalence.svg", "Estimación exploratoria de frecuencia molecular", "Calcula cuántas secuencias utilizables se requieren para estimar una proporción con precisión y confianza definidas. La interpretación depende del diseño que generó las secuencias.", ["p = frecuencia esperada del linaje en el conjunto representado", "d = precisión absoluta deseada", "Z = valor z asociado al nivel de confianza", "n = secuencias utilizables requeridas"]);
+    } else {
+      target = `<div class="formula-note-card"><strong>Meta operativa de secuencias</strong><p>El usuario fija directamente el número de secuencias utilizables requeridas. DIMUPorcino no infiere ni recomienda ese número; a partir de esta meta calcula hacia atrás las unidades necesarias en las etapas siguientes.</p></div>`;
+    }
     if (scope === "positive") return target + formulaFigure("assets/img/formulas/seq_positive.svg", "Embudo laboratorial", "Parte de muestras positivas elegibles y las convierte en secuencias utilizables esperadas.", ["r = rendimiento laboratorial global", "r = amplificación × secuenciación × calidad", "n = secuencias requeridas"]);
     if (scope === "total") return target + formulaFigure("assets/img/formulas/seq_total.svg", "Embudo desde muestras totales", "Parte de todas las muestras disponibles y aplica positividad, amplificación, secuenciación y calidad.", ["r = rendimiento global desde muestras totales", "r = positividad × amplificación × secuenciación × calidad", "n = secuencias requeridas"]);
     if (scope === "farm") return target + formulaFigure("assets/img/formulas/seq_farm.svg", "Secuenciación desde una granja", "Convierte el muestreo de cerdos o muestras iniciales dentro de la granja en secuencias utilizables.", ["Se integra positividad animal, sensibilidad diagnóstica y rendimiento laboratorial", "La salida final es el número de cerdos o muestras iniciales requeridas"]);
