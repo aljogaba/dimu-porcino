@@ -190,6 +190,56 @@ input:focus, select:focus, textarea:focus { outline: 3px solid rgba(39, 106, 92,
 .reference-box summary { font-weight: 800; cursor: pointer; }
 .reference-box li { margin: 8px 0; color: var(--muted); }
 
+/* Secuenciación: opciones inferenciales experimentales */
+#experimental-molecular-goals {
+  padding: 16px 18px 20px;
+}
+#experimental-molecular-goals[open] > summary {
+  margin-bottom: 12px;
+}
+#experimental-molecular-goals .section-note {
+  margin: 0 0 20px;
+  line-height: 1.65;
+}
+#experimental-molecular-goals .choice-grid {
+  gap: 16px;
+  margin-bottom: 22px;
+}
+#experimental-molecular-goals .choice-card {
+  padding: 18px;
+  min-height: 112px;
+}
+#experimental-molecular-goals .choice-card strong {
+  margin-bottom: 8px;
+  line-height: 1.35;
+}
+#experimental-molecular-goals .choice-card small {
+  display: block;
+  line-height: 1.55;
+}
+#experimental-molecular-goals #variant-target-fields,
+#experimental-molecular-goals #frequency-target-fields {
+  margin-top: 2px;
+  gap: 18px;
+  align-items: start;
+}
+#experimental-molecular-goals label.field {
+  gap: 9px;
+}
+#experimental-molecular-goals label.field > span {
+  min-height: 0;
+  line-height: 1.35;
+}
+#experimental-molecular-goals .field-help {
+  display: block;
+  margin: 2px 0 2px;
+  line-height: 1.55;
+}
+#experimental-molecular-goals input,
+#experimental-molecular-goals select {
+  margin-top: 2px;
+}
+
 @media (max-width: 980px) {
   .mode-grid { grid-template-columns: 1fr; }
   .workspace-grid { grid-template-columns: 1fr; }
