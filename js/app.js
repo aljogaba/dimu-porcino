@@ -791,8 +791,8 @@
         explanation: `${formatInt(funnel.guaranteedInitial)} muestras totales para obtener al menos ${formatInt(target)} secuencias utilizables con ${formatNumber(planningConfidence * 100, 0)} % de probabilidad.`,
         details: [["Muestras totales disponibles", formatInt(available)], ["Positividad esperada de las muestras", `${formatNumber(positivity,1)} %`], ["Secuencias utilizables requeridas", formatInt(target)], ["Muestras requeridas con garantía", formatInt(funnel.guaranteedInitial)], ["Secuencias esperadas con las disponibles", formatNumber(expectedFromAvailable,1)], ["Probabilidad de alcanzar la meta con las disponibles", percent(achievedFromAvailable)]],
         warnings,
-        report: `A partir de ${formatInt(available)} ${valueOf("seqTotalLabel") || "muestras"} totales y una positividad esperada de las muestras de ${formatNumber(positivity, 1)} %, se espera un rendimiento global de ${percent(funnel.overall)}. Bajo estos supuestos, se requieren ${formatInt(funnel.guaranteedInitial)} muestras totales para alcanzar al menos ${formatInt(target)} secuencias utilizables con ${formatNumber(planningConfidence * 100, 0)} % de probabilidad.`,
-        funnel,
+        report: `Se dispone de ${formatInt(available)} ${valueOf("seqTotalLabel") || "muestras"} totales con una positividad esperada de ${formatNumber(positivity, 1)} %. Con los rendimientos seleccionados se esperan aproximadamente ${formatNumber(expectedFromAvailable, 1)} secuencias utilizables y la probabilidad de alcanzar la meta de ${formatInt(target)} es ${percent(achievedFromAvailable)}. Para alcanzar esa meta con ${formatNumber(planningConfidence * 100, 0)} % de probabilidad se requieren al menos ${formatInt(funnel.guaranteedInitial)} muestras totales bajo estos supuestos.`,
+        funnel: { ...funnel, stagesExpected: [available, available * positivity / 100, available * positivity / 100 * amp, available * positivity / 100 * amp * seq, expectedFromAvailable] },
         formulaHtml: sequencingFormulaHtml("total"),
         flow: [
           { label: valueOf("seqTotalLabel") || "Muestras totales", value: `${formatInt(available)}` },
