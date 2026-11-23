@@ -343,6 +343,10 @@
       </div>
       <div id="manual-target-fields" class="subpanel">
         ${field("manualSequences", "Secuencias utilizables requeridas", 100, { min: 1, step: 1, help: "Este número lo define el usuario según las necesidades de su estudio; DIMUPorcino no lo recomienda automáticamente." })}
+        <div class="method-warning">
+          <strong>Importante sobre esta meta</strong>
+          <p>DIMUPorcino utiliza este número como una meta operativa. No implica que esa cantidad de secuencias sea suficiente para representar diversidad genética, estimar frecuencias de linajes o realizar inferencia sobre una granja, región o territorio. Esa suficiencia depende del objetivo científico y del diseño del estudio.</p>
+        </div>
       </div>
       <details id="experimental-molecular-goals" class="reference-box">
         <summary>Opciones inferenciales experimentales</summary>
@@ -361,14 +365,36 @@
           ${selectField("lineageConfidence", "Confianza de la estimación", [["0.90","90 %"],["0.95","95 %"],["0.99","99 %"]], "0.95")}
         </div>
       </details>
-      <div class="subpanel">
+      <div class="subpanel sequence-scope-panel">
         <h3>¿Desde dónde comienza la planeación?</h3>
-        <p class="field-help">El punto de partida determina cómo se retrocede desde la meta de secuencias hasta granjas, animales o muestras.</p>
-        <div class="choice-grid">
-          ${choice("sequenceScope", "territory", "Estado, región o municipio", "Calcula granjas, cerdos por granja y el proceso necesario para alcanzar la meta de secuencias.", true)}
-          ${choice("sequenceScope", "farm", "Una sola granja", "Calcula cerdos o muestras iniciales dentro de una población elegida.")}
-          ${choice("sequenceScope", "positive", "Muestras positivas disponibles", "Parte de muestras ya clasificadas como positivas y calcula el rendimiento molecular posterior.")}
-          ${choice("sequenceScope", "total", "Muestras totales disponibles", "Parte del total de muestras y aplica positividad y rendimiento molecular hasta la secuencia utilizable.")}
+        <p class="field-help">El punto de partida determina qué parte del proceso debe diseñar DIMUPorcino para alcanzar la meta de secuencias.</p>
+
+        <div class="scope-group">
+          <div class="scope-group-heading">
+            <span class="scope-tag">A</span>
+            <div>
+              <strong>Desde la población — diseño de campo</strong>
+              <small>Aún no se han obtenido las muestras. La planeación debe considerar unidades epidemiológicas, animales y toma de muestras.</small>
+            </div>
+          </div>
+          <div class="choice-grid">
+            ${choice("sequenceScope", "territory", "Estado, región o municipio", "Planea el trabajo de campo desde una población territorial para alcanzar la meta de secuencias.", true)}
+            ${choice("sequenceScope", "farm", "Una sola granja", "Planea el muestreo dentro de una granja para alcanzar la meta de secuencias.")}
+          </div>
+        </div>
+
+        <div class="scope-group">
+          <div class="scope-group-heading">
+            <span class="scope-tag">B</span>
+            <div>
+              <strong>Desde muestras ya obtenidas — planeación molecular/laboratorial</strong>
+              <small>El trabajo de campo ya ocurrió. La planeación comienza a partir del material disponible y de su rendimiento posterior.</small>
+            </div>
+          </div>
+          <div class="choice-grid">
+            ${choice("sequenceScope", "positive", "Muestras positivas disponibles", "Parte de muestras ya clasificadas como positivas; el embudo comienza después del diagnóstico.")}
+            ${choice("sequenceScope", "total", "Muestras totales disponibles", "Parte de un conjunto de muestras aún no condicionado a positividad y aplica el rendimiento hasta obtener secuencias utilizables.")}
+          </div>
         </div>
       </div>`;
 
