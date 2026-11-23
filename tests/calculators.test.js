@@ -12,6 +12,8 @@ assert.strictEqual(c.prevalenceSample({ expectedPrevalence: 50, precision: 5, co
 assert.strictEqual(c.finiteDetectionSample({ populationSize: 4526, designPrevalence: 5, confidence: 0.95, testSensitivity: 90 }).final, 65);
 assert.strictEqual(c.finiteDetectionSample({ populationSize: 4526, designPrevalence: 10, confidence: 0.95, testSensitivity: 90 }).final, 32);
 assert.strictEqual(c.variantDetection({ variantFrequency: 5, confidence: 0.95 }).usableSequences, 59);
+const yield844 = c.laboratoryYield({ initialSamples: 844, startPositivity: 46.5, amplificationSuccess: 90, sequencingSuccess: 70, qualitySuccess: 95 });
+assert.ok(Math.abs(yield844.expectedUsable - 234.88731) < 1e-8);
 const funnel = c.laboratoryFunnel({ targetSequences: 59, startPositivity: 40, amplificationSuccess: 90, sequencingSuccess: 70, qualitySuccess: 100, confidence: 0.95 });
 assert.strictEqual(funnel.guaranteedInitial, 279);
 console.log("All calculator tests passed.");
