@@ -135,18 +135,44 @@
   function updateSequenceTargetMode() {
     const mode = checkedValue("sequenceTargetMode");
     $("#manual-target-fields").hidden = mode !== "manual";
+    $("#yield-target-fields").hidden = mode !== "yield";
     $("#variant-target-fields").hidden = mode !== "variant";
     $("#frequency-target-fields").hidden = mode !== "frequency";
-    if (mode !== "manual") $("#experimental-molecular-goals").open = true;
+
+    const yieldMode = mode === "yield";
+    $("#field-scope-group").hidden = yieldMode;
+    if (yieldMode) {
+      const currentScope = checkedValue("sequenceScope");
+      if (currentScope === "territory" || currentScope === "farm") {
+        const totalRadio = document.querySelector('input[name="sequenceScope"][value="total"]');
+        if (totalRadio) totalRadio.checked = true;
+      }
+    }
+    if (mode === "variant" || mode === "frequency") $("#experimental-molecular-goals").open = true;
+    updateSequenceScope();
   }
 
   function updateSequenceScope() {
     const scope = checkedValue("sequenceScope");
+    const targetMode = checkedValue("sequenceTargetMode");
+    const laboratoryScope = scope === "positive" || scope === "total";
+
     $("#sequence-territory-fields").hidden = scope !== "territory";
     $("#sequence-farm-fields").hidden = scope !== "farm";
     $("#sequence-positive-fields").hidden = scope !== "positive";
     $("#sequence-total-fields").hidden = scope !== "total";
-    $("#seqTestSe").closest("label").hidden = scope === "positive";
+
+    $("#seqTestSe").closest("label").hidden = laboratoryScope;
+    $("#seq-independence-wrap").hidden = laboratoryScope;
+    $("#seq-planning-confidence-wrap").hidden = targetMode === "yield";
+
+    const guide = $("#sequence-lab-guide");
+    guide.hidden = !laboratoryScope;
+    if (laboratoryScope) {
+      $("#sequence-lab-route").innerHTML = scope === "total"
+        ? "<span>Muestras totales</span><b>→</b><span>Positivas esperadas</span><b>→</b><span>Amplicón</span><b>→</b><span>Secuenciación</span><b>→</b><span>Ensamble / calidad</span><b>→</b><span>Utilizables</span>"
+        : "<span>Muestras positivas</span><b>→</b><span>Amplicón</span><b>→</b><span>Secuenciación</span><b>→</b><span>Ensamble / calidad</span><b>→</b><span>Utilizables</span>";
+    }
   }
 
   function validatePositive(value, label) {
@@ -290,6 +316,7 @@
 
   function sequencingTarget() {
     const mode = checkedValue("sequenceTargetMode");
+    if (mode === "yield") return null;
     if (mode === "manual") {
       const target = numberOf("manualSequences");
       validatePositive(target, "Las secuencias utilizables requeridas");
@@ -310,6 +337,7 @@
 
   function calculateSequencing() {
     const scope = checkedValue("sequenceScope");
+    const targetMode = checkedValue("sequenceTargetMode");
     const target = sequencingTarget();
     const amp = numberOf("seqAmplification") / 100;
     const seq = numberOf("seqSequencing") / 100;
