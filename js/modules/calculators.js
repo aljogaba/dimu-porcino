@@ -175,6 +175,27 @@
     return { methodId: "MOL-DET-001", usableSequences: ceil(n), p, confidence: C };
   }
 
+  function laboratoryYield({ initialSamples, startPositivity = 100, amplificationSuccess = 100, sequencingSuccess = 100, qualitySuccess = 100 }) {
+    const initial = Math.max(0, Number(initialSamples) || 0);
+    const rates = [startPositivity, amplificationSuccess, sequencingSuccess, qualitySuccess].map(toProbability);
+    const overall = rates.reduce((acc, value) => acc * value, 1);
+    const stagesExpected = [
+      initial,
+      initial * rates[0],
+      initial * rates[0] * rates[1],
+      initial * rates[0] * rates[1] * rates[2],
+      initial * overall
+    ];
+    return {
+      methodId: "MOL-YLD-001",
+      initial,
+      rates,
+      overall,
+      expectedUsable: stagesExpected[4],
+      stagesExpected
+    };
+  }
+
   function laboratoryFunnel({ targetSequences, startPositivity = 100, amplificationSuccess = 100, sequencingSuccess = 100, qualitySuccess = 100, confidence = 0.95 }) {
     const target = Math.max(1, Math.ceil(Number(targetSequences)));
     const rates = [startPositivity, amplificationSuccess, sequencingSuccess, qualitySuccess].map(toProbability);
@@ -231,6 +252,7 @@
     finiteDetectionSample,
     herdSpecificity,
     variantDetection,
+    laboratoryYield,
     laboratoryFunnel,
     probabilityAtLeast,
     minimumTrialsForTarget,
