@@ -345,6 +345,64 @@
     const planningConfidence = Number(valueOf("seqPlanningConfidence"));
     const warnings = [];
 
+    if (targetMode === "yield" && scope === "positive") {
+      const available = numberOf("seqPositiveAvailable");
+      validatePositive(available, "El número de muestras positivas disponibles");
+      const yieldResult = calc.laboratoryYield({
+        initialSamples: available,
+        startPositivity: 100,
+        amplificationSuccess: numberOf("seqAmplification"),
+        sequencingSuccess: numberOf("seqSequencing"),
+        qualitySuccess: numberOf("seqQuality")
+      });
+      return {
+        primary: yieldResult.expectedUsable,
+        primaryUnit: "secuencias utilizables esperadas",
+        explanation: `De ${formatInt(available)} muestras positivas se esperan aproximadamente ${formatNumber(yieldResult.expectedUsable, 1)} secuencias utilizables bajo los rendimientos seleccionados.`,
+        details: [["Muestras positivas disponibles", formatInt(available)], ["Rendimiento molecular global", percent(yieldResult.overall)], ["Secuencias utilizables esperadas", formatNumber(yieldResult.expectedUsable, 1)]],
+        warnings: ["La cifra es un valor esperado, no una garantía. Supone rendimientos promedio constantes y pérdidas aproximadamente independientes entre etapas."],
+        report: `A partir de ${formatInt(available)} ${valueOf("seqPositiveLabel") || "muestras"} ya clasificadas como positivas, y considerando ${formatNumber(numberOf("seqAmplification"), 1)} % de éxito de amplificación del blanco, ${formatNumber(numberOf("seqSequencing"), 1)} % de éxito de secuenciación y ${formatNumber(numberOf("seqQuality"), 1)} % de éxito de ensamble y control de calidad, se esperan aproximadamente ${formatNumber(yieldResult.expectedUsable, 1)} secuencias utilizables.`,
+        funnel: yieldResult,
+        formulaHtml: sequencingFormulaHtml("positive"),
+        flow: [
+          { label: "Muestras positivas", value: `${formatInt(available)}` },
+          { label: "Amplicones esperados", value: `${formatInt(yieldResult.stagesExpected[2])}` },
+          { label: "Secuenciadas", value: `${formatInt(yieldResult.stagesExpected[3])}` },
+          { label: "Utilizables", value: `${formatInt(yieldResult.expectedUsable)}` }
+        ]
+      };
+    }
+
+    if (targetMode === "yield" && scope === "total") {
+      const available = numberOf("seqTotalAvailable");
+      const positivity = numberOf("seqTotalPositivity");
+      validatePositive(available, "El número de muestras totales disponibles");
+      const yieldResult = calc.laboratoryYield({
+        initialSamples: available,
+        startPositivity: positivity,
+        amplificationSuccess: numberOf("seqAmplification"),
+        sequencingSuccess: numberOf("seqSequencing"),
+        qualitySuccess: numberOf("seqQuality")
+      });
+      return {
+        primary: yieldResult.expectedUsable,
+        primaryUnit: "secuencias utilizables esperadas",
+        explanation: `De ${formatInt(available)} muestras totales se esperan aproximadamente ${formatNumber(yieldResult.expectedUsable, 1)} secuencias utilizables bajo la positividad y los rendimientos seleccionados.`,
+        details: [["Tipo de muestra o material", valueOf("seqTotalLabel") || "Muestras"], ["Muestras totales disponibles", formatInt(available)], ["Positividad esperada", `${formatNumber(positivity, 1)} %`], ["Positivas esperadas", formatNumber(yieldResult.stagesExpected[1], 1)], ["Rendimiento global hasta secuencia utilizable", percent(yieldResult.overall)], ["Secuencias utilizables esperadas", formatNumber(yieldResult.expectedUsable, 1)]],
+        warnings: ["La cifra es un valor esperado y no garantiza que se obtenga exactamente ese número de secuencias. La utilidad epidemiológica de las secuencias depende además del origen y diseño con que fueron obtenidas las muestras."],
+        report: `A partir de ${formatInt(available)} ${valueOf("seqTotalLabel") || "muestras"} totales y una positividad esperada de ${formatNumber(positivity, 1)} %, se esperan ${formatNumber(yieldResult.stagesExpected[1], 1)} muestras positivas. Considerando ${formatNumber(numberOf("seqAmplification"), 1)} % de éxito de amplificación del blanco, ${formatNumber(numberOf("seqSequencing"), 1)} % de éxito de secuenciación y ${formatNumber(numberOf("seqQuality"), 1)} % de éxito de ensamble y control de calidad, el rendimiento global esperado es ${percent(yieldResult.overall)} y se estiman aproximadamente ${formatNumber(yieldResult.expectedUsable, 1)} secuencias utilizables.`,
+        funnel: yieldResult,
+        formulaHtml: sequencingFormulaHtml("total"),
+        flow: [
+          { label: valueOf("seqTotalLabel") || "Muestras totales", value: `${formatInt(available)}` },
+          { label: "Positivas esperadas", value: `${formatInt(yieldResult.stagesExpected[1])}` },
+          { label: "Amplicones esperados", value: `${formatInt(yieldResult.stagesExpected[2])}` },
+          { label: "Secuenciadas", value: `${formatInt(yieldResult.stagesExpected[3])}` },
+          { label: "Utilizables", value: `${formatInt(yieldResult.expectedUsable)}` }
+        ]
+      };
+    }
+
     if (scope === "positive") {
       const funnel = calc.laboratoryFunnel({ targetSequences: target, startPositivity: 100, amplificationSuccess: numberOf("seqAmplification"), sequencingSuccess: numberOf("seqSequencing"), qualitySuccess: numberOf("seqQuality"), confidence: planningConfidence });
       return {
@@ -379,9 +437,9 @@
         primary: funnel.guaranteedInitial,
         primaryUnit: "muestras totales",
         explanation: `${formatInt(funnel.guaranteedInitial)} muestras totales para obtener al menos ${formatInt(target)} secuencias utilizables con ${formatNumber(planningConfidence * 100, 0)} % de probabilidad.`,
-        details: [["Muestras totales disponibles", formatInt(available)], ["Frecuencia esperada de positivas", `${formatNumber(positivity,1)} %`], ["Secuencias utilizables requeridas", formatInt(target)], ["Muestras requeridas con garantía", formatInt(funnel.guaranteedInitial)], ["Secuencias esperadas con las disponibles", formatNumber(expectedFromAvailable,1)], ["Probabilidad de alcanzar la meta con las disponibles", percent(achievedFromAvailable)]],
+        details: [["Muestras totales disponibles", formatInt(available)], ["Positividad esperada de las muestras", `${formatNumber(positivity,1)} %`], ["Secuencias utilizables requeridas", formatInt(target)], ["Muestras requeridas con garantía", formatInt(funnel.guaranteedInitial)], ["Secuencias esperadas con las disponibles", formatNumber(expectedFromAvailable,1)], ["Probabilidad de alcanzar la meta con las disponibles", percent(achievedFromAvailable)]],
         warnings,
-        report: `A partir de ${formatInt(available)} ${valueOf("seqTotalLabel") || "muestras"} totales y una frecuencia esperada de positivas de ${formatNumber(positivity, 1)} %, se espera un rendimiento global de ${percent(funnel.overall)}. Bajo estos supuestos, se requieren ${formatInt(funnel.guaranteedInitial)} muestras totales para alcanzar al menos ${formatInt(target)} secuencias utilizables con ${formatNumber(planningConfidence * 100, 0)} % de probabilidad.`,
+        report: `A partir de ${formatInt(available)} ${valueOf("seqTotalLabel") || "muestras"} totales y una positividad esperada de las muestras de ${formatNumber(positivity, 1)} %, se espera un rendimiento global de ${percent(funnel.overall)}. Bajo estos supuestos, se requieren ${formatInt(funnel.guaranteedInitial)} muestras totales para alcanzar al menos ${formatInt(target)} secuencias utilizables con ${formatNumber(planningConfidence * 100, 0)} % de probabilidad.`,
         funnel,
         formulaHtml: sequencingFormulaHtml("total"),
         flow: [
@@ -474,7 +532,9 @@
   function sequencingFormulaHtml(scope) {
     const targetMode = checkedValue("sequenceTargetMode");
     let target;
-    if (targetMode === "variant") {
+    if (targetMode === "yield") {
+      target = `<div class="formula-note-card"><strong>Estimación del rendimiento del banco</strong><p>No existe una meta final predefinida. La salida esperada se obtiene multiplicando el número inicial de muestras por las probabilidades sucesivas de cada etapa del proceso molecular.</p></div>`;
+    } else if (targetMode === "variant") {
       target = formulaFigure("assets/img/formulas/seq_target.svg", "Detección exploratoria de linaje o variante", "Calcula cuántas secuencias utilizables se requieren para tener la probabilidad deseada de encontrar al menos una secuencia de un linaje presente a una frecuencia mínima.", ["C = probabilidad deseada de encontrar al menos una secuencia", "p = frecuencia mínima del linaje o variante en el conjunto representado", "n = secuencias utilizables requeridas"]);
     } else if (targetMode === "frequency") {
       target = formulaFigure("assets/img/formulas/prevalence.svg", "Estimación exploratoria de frecuencia molecular", "Calcula cuántas secuencias utilizables se requieren para estimar una proporción con precisión y confianza definidas. La interpretación depende del diseño que generó las secuencias.", ["p = frecuencia esperada del linaje en el conjunto representado", "d = precisión absoluta deseada", "Z = valor z asociado al nivel de confianza", "n = secuencias utilizables requeridas"]);
